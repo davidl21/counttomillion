@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/davidl21/counttomillion/server/data"
+	"github.com/davidl21/counttomillion/server/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -32,9 +33,18 @@ func main() {
 	}
 	defer store.Close()
 
+	l := log.New(os.Stdout, "count-api ", log.LstdFlags)
+	countHandler := handlers.NewCount(l, store)
+
 	serveMux := mux.NewRouter()
 
-	log.Println("Starting server on port 8080")
+	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/count", countHandler.IncrementCount)
+
+	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/count", countHandler.IncrementCount)
+
+	l.Println("Starting server on port 8080")
 	err = http.ListenAndServe(":8080", serveMux)
 	if err != nil {
 		log.Fatal(err)
