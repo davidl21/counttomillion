@@ -34,9 +34,12 @@ func main() {
 	defer store.Close()
 
 	l := log.New(os.Stdout, "count-api ", log.LstdFlags)
+
 	countHandler := handlers.NewCount(l, store)
+	wsHandler := handlers.NewWSHandler(l, store)
 
 	serveMux := mux.NewRouter()
+	serveMux.HandleFunc("/ws", wsHandler.HandleConnection)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/count", countHandler.IncrementCount)
