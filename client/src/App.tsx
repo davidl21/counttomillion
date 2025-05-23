@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Chat from "./pages/Chat";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
+      <Chat />
       <form onSubmit={handleSubmit} className="flex flex-col items-center mb-8">
         <input
           type="number"
