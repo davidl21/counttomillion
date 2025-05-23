@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface Message {
   message: string;
@@ -28,12 +28,12 @@ const Chat = () => {
 
     wsConnection.onerror = (error) => {
       console.error("WebSocket error:", error);
-      setWs(null); // Clear ws on error
+      setWs(null);
     };
 
     wsConnection.onclose = () => {
       console.log("WebSocket closed");
-      setWs(null); // Clear ws on close
+      setWs(null);
     };
 
     return () => {
