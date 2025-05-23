@@ -39,7 +39,22 @@ func (ws *WebSocketHandler) HandleConnection(rw http.ResponseWriter, r *http.Req
 		ws.l.Println("Error upgrading:", err)
 		return
 	}
+
+	go ws.HandleConcurrentConnection(conn)
+}
+
+func (ws *WebSocketHandler) HandleConcurrentConnection(conn *websocket.Conn) {
 	defer conn.Close()
+	
+	ws.mu.Lock()
+	ws.clients[conn] = true
+	ws.mu.Unlock()
+
+	defer func() {
+		ws.mu.Lock()
+		delete(ws.clients, conn)
+		ws.mu.Unlock()
+	}()
 
 	for {
 		_, message, err := conn.ReadMessage()
